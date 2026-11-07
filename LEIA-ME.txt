@@ -1,0 +1,29 @@
+ZENTRO — Projeto atualizado
+
+Conteúdo:
+- index.html (original, preservado)
+- style.css (original, preservado)
+- game.js (geração de percursos reformulada)
+
+Alterações:
+- 55 percursos autorais distribuídos pelos cinco universos.
+- Combinações e sequências de obstáculos/plataformas específicas por fase.
+- Posicionamento horizontal, alturas, larguras e espaçamentos variados.
+- Progressão de complexidade entre fases e identidades distintas por universo.
+- Sem alterações na física, gravidade, velocidade, colisões, controles, personagens,
+  loja, moedas, checkpoints, HUD, sons, músicas, menus ou sistemas existentes.
+
+Verificações realizadas:
+- Sintaxe JavaScript validada com Node.js.
+- Geração executada para todas as 55 fases.
+- 55 sequências estruturais distintas detectadas.
+- Nenhum tipo de objeto desconhecido.
+- Nenhum vão acima de 178 unidades.
+- 678 plataformas verificadas quanto ao posicionamento dentro dos vãos e altura
+  de pouso dentro do limite de salto configurado.
+- index.html e style.css comparados byte a byte com os originais.
+
+Observação:
+O pacote contém os três arquivos fornecidos nesta conversa. O HTML original referencia
+assets/icones/favicon.svg, mas essa pasta/arquivo não foi fornecida e, por isso, não
+foi recriada nem alterada.
