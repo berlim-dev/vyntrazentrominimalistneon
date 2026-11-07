@@ -47,94 +47,85 @@ if(ps%2===0&&(ps*5+bar*3)%7<4){const i=(ps/2*3+bar*2)%c.sc.length;this.n(t,fq(r+
 outro(){const m=this.m;if(!m)return;m.done=1;const c=this.ctx,t=c.currentTime+.05,r=m.cfg.root+12;[0,4,7,12,16].forEach((v,i)=>this.n(t+i*.09,fq(r+v+12),1.6,'triangle',.08,m.bus,.01));setTimeout(()=>this.stop(2.5),1200)},
 sfx(n){if(!this.ctx||!S.o.sfx)return;const c=this.ctx,t0=c.currentTime;(SF[n]||[]).forEach(([w,f0,f1,d,v,dl])=>{const t=t0+(dl||0);if(w==='n')return this.ns(t,d,v,this.sg,900,'lowpass');const o=c.createOscillator(),g=c.createGain();o.type=w;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(this.sg);o.start(t);o.stop(t+d+.02)})}};
 const snd=n=>A.sfx(n);
-/* ===== FASES ===== */
-const PT=[
-{d:0,f:(o,x)=>{o.push({t:'s',x,w:30,h:30});return x+30}},
-{d:0,f:(o,x)=>{o.push({t:'s',x,w:30,h:30},{t:'s',x:x+30,w:30,h:30});return x+60}},
-{d:.02,f:(o,x)=>{o.push({t:'b',x,w:30,h:30});return x+30}},
-{d:.1,f:(o,x,d,r)=>{const w=Math.round(58+d*28+r()*10);o.push({t:'g',x,w});return x+w}},
-{d:.15,f:(o,x,d,r)=>{const w=Math.round(100+r()*70),h=d<.35?30:60;o.push({t:'b',x,w,h});if(d>.45)o.push({t:'s',x:x+w+170,w:30,h:30});return x+w+(d>.45?200:0)}},
-{d:.25,f:(o,x)=>{for(let k=0;k<3;k++)o.push({t:'s',x:x+k*30,w:30,h:30});return x+90}},
-{d:.3,f:(o,x)=>{o.push({t:'h',x,w:28,h:28,y:46});return x+28}},
-{d:.35,f:(o,x)=>{o.push({t:'b',x,w:30,h:30},{t:'s',x:x+90,w:30,h:30});return x+120}},
-{d:.55,f:(o,x,d,r,sp=170)=>{const w=Math.round(68+d*26);o.push({t:'g',x,w},{t:'s',x:x+w+sp,w:30,h:30});return x+w+sp+30}},
- {d:.6,f:(o,x,d,r,sp=170)=>{o.push({t:'b',x,w:130,h:30},{t:'g',x:x+130+sp,w:80});return x+130+sp+80}},
- {d:.12,f:(o,x,d,r)=>{o.push({t:'v',x,w:38,h:24,y:39+r()*7,ph:r()*6.28,amp:4+r()*3});return x+38}},
- {d:.28,f:(o,x,d,r)=>{const w=85+Math.round(r()*55),y=65+Math.round(r()*65);o.push({t:'p',x,w,h:14,y});return x+w+65}},
- {d:.42,f:(o,x,d,r)=>{o.push({t:'v',x,w:38,h:24,y:38+r()*8,ph:r()*6.28,amp:5});o.push({t:'s',x:x+125,w:30,h:30});return x+155}},
-// Plataformas ZENTRO — 18 variações introduzidas gradualmente
-...Array.from({length:18},(_,k)=>({d:[.08,.08,.12,.12,.2,.2,.28,.3,.38,.42,.48,.52,.58,.62,.68,.72,.78,.84][k],f:(o,x,d,r)=>{
- const w=[150,82,54,190,132,112,118,92,124,118,112,106,100,110,112,118,120,126][k];
- const y=[28,72,38,30,52,88,58,66,48,42,74,62,70,56,64,68,58,60][k];
- const h=[12,18,12,14,14,12,14,14,14,14,12,14,14,14,14,14,14,14][k];
- // Cada conjunto de plataformas substitui um trecho de chão: atravessá-lo exige saltar e pousar nelas.
- const start=x+50;
- const q={t:'pl',k,x:start,w,h,y,baseX:start,baseY:y,ph:r()*6.283,amp:Math.min(24+r()*18,22),used:0,dead:0,angle:0};
- o.push({t:'g',x,w:w+150});
- if(k===8){o.push({...q,x:start,w:48},{...q,x:start+76,w:48});return x+w+150}
- if(k===9){o.push({...q,x:start,w:48},{...q,x:start+62,w:48});return x+212}
- if(k===15){o.push({...q,x:start,w:38},{...q,x:start+48,w:38},{...q,x:start+96,w:38});return x+234}
- return x+w+150;
-}}))];
-function addVoidSection(ob,x,d,r,spd,u){
- const gap=218+Math.round(d*18),h=14;
- ob.push({t:'g',x,w:gap});
- const ys=[48,64,48],xs=[x+12,x+82,x+152],ws=[66,66,66];
- for(let j=0;j<3;j++){const timed=j===1;ob.push({t:'pl',k:timed?10:0,x:xs[j],w:ws[j],h,y:ys[j],baseX:xs[j],baseY:ys[j],ph:0,amp:0,used:0,dead:0,angle:0,life:.32});}
- // Espinhos sinalizados no trecho central; a zona de pouso permanece ampla nas laterais.
- ob.push({t:'sp',x:x+104,y:ys[1]+h,w:20,h:17});
- return x+gap;
-}
-function build(u,i,demo){const D=U[u],dSpd=demo?.15:clamp(D.d[0]+(D.d[1]-D.d[0])*(D.c>1?i/(D.c-1):0)+(i%4)*.14,0,1),
- // Progressão: a dificuldade de layout cresce de forma contínua ao longo do universo (sem "dentes de serra").
- LR=[[.05,.2],[.2,.4],[.4,.55],[.55,.8],[.8,1]][u],d=demo?.15:clamp(LR[0]+(LR[1]-LR[0])*(D.c>1?i/(D.c-1):0),0,1),
- spd=demo?330:330+u*22+dSpd*40,len=demo?5000:7000+u*900+i*150,r=rng(u*1000+i*37+11),ob=[];
-// Tempo livre entre desafios (em segundos): generoso nas fases iniciais e menor nas finais, sempre >= tempo de um salto + reação.
-const pg=D.c>1?i/(D.c-1):0,gapSec=1.12-.45*d-.08*pg,sp0=Math.round(spd*gapSec);
-let end=null,voidDone=false,nextForced=1450,forcedType=0;
-const put=(items,w,sx)=>{for(const o of items){o.x+=sx;if(o.baseX!==undefined)o.baseX+=sx;ob.push(o)}end=sx+w};
-while(true){
- const jit=Math.round(r()*(1-d*.5)*50),sx=end===null?800:end+sp0+jit;
- if(sx>=len-700)break;
- const forceVoid=!demo&&u===1&&i===2&&!voidDone&&sx>1350;
- const voidChance=!demo&&u>0?Math.min(.095,.025+u*.012+d*.025):0;
- const tmp=[];
- if(forceVoid||(!voidDone&&r()<voidChance&&sx>1050)){
-   const w=addVoidSection(tmp,0,d,r,spd,u);
-   // O espinho sobre a plataforma do vão não é mantido: nada fica dentro de vãos.
-   put(tmp.filter(o=>o.t!=='sp'),w,sx);voidDone=true;
- }else if(!demo&&sx>=nextForced){
-   // Obstáculos de chão em pontos planejados: o jogador precisa saltar para seguir (alterna triângulo e quadrado).
-   tmp.push({t:forcedType%2===0?'s':'b',x:0,w:30,h:30});forcedType++;
-   put(tmp,30,sx);nextForced=end+900+(1-d)*220+r()*250;
- }else{
-   // Só entram padrões com função clara: obstáculo a saltar, vão a atravessar,
-   // espinhos em rota obrigatória ou plataformas que formam a travessia do vão.
-   const av=PT.filter((q,idx)=>q.d<=d&&![6,10,11].includes(idx)&&(!demo||idx<13)); // o fundo do menu usa só padrões que o robô de demonstração sabe cruzar
-   const q=av[Math.floor(r()*av.length)];
-   const w=q.f(tmp,0,d,r,sp0);put(tmp,w,sx);
- }
-}
-// Balanceamento global de vãos (inalterado): nenhum vão passa de MAX_GAP; o conteúdo do trecho é comprimido junto.
- const MAX_GAP=178;
- const gaps=ob.filter(o=>o.t==='g'&&o.w>MAX_GAP).sort((a,b)=>a.x-b.x);
- for(const gap of gaps){
-   const oldW=gap.w, newW=MAX_GAP, end2=gap.x+oldW, factor=newW/oldW, delta=oldW-newW;
-   for(const o of ob){
-     if(o===gap)continue;
-     const ox=o.x;
-     if(ox>=gap.x&&ox<end2){
-       o.x=gap.x+(ox-gap.x)*factor;
-       if(o.baseX!==undefined)o.baseX=gap.x+(o.baseX-gap.x)*factor;
-       if(o.w&&o.t==='pl')o.w=Math.max(38,o.w*factor);
-     }else if(ox>=end2){
-       o.x-=delta;
-       if(o.baseX!==undefined)o.baseX-=delta;
-     }
+/* ===== FASES: PERCURSOS AUTORAIS POR FASE ===== */
+// Cada universo possui uma linguagem de percurso própria. Os padrões abaixo usam
+// exclusivamente os tipos de objeto e as colisões já existentes no jogo.
+function build(u,i,demo){
+ const D=U[u],pg=D.c>1?i/(D.c-1):0;
+ const d=demo?.12:clamp([[.06,.22],[.22,.42],[.42,.58],[.58,.82],[.82,1]][u][0]+([[.06,.22],[.22,.42],[.42,.58],[.58,.82],[.82,1]][u][1]-[[.06,.22],[.22,.42],[.42,.58],[.58,.82],[.82,1]][u][0])*pg,0,1);
+ const dSpd=demo?.15:clamp(D.d[0]+(D.d[1]-D.d[0])*pg,0,1);
+ const spd=demo?330:330+u*22+dSpd*40;
+ const len=demo?5000:7000+u*900+i*150;
+ const r=rng(0x5a170+u*7919+i*104729),ob=[];
+ const gapSec=1.12-.34*d-.06*pg,rest=Math.round(spd*gapSec);
+ let x=demo?800:720;
+ const put=(o)=>{ob.push(o)};
+ const ground=(t,at,w=30,h=30,extra={})=>put({t,x:at,w,h,...extra});
+ const pit=(at,width,ys,ws,ks)=>{
+   put({t:'g',x:at,w:width});
+   let px=at+10;
+   const spacing=ys.length>1?Math.max(4,(width-20-ws.reduce((sum,w)=>sum+w,0))/(ys.length-1)):0;
+   for(let j=0;j<ys.length;j++){
+     const w=ws[j],y=ys[j],k=ks[j];
+     put({t:'pl',k,x:px,w,h:14,y,baseX:px,baseY:y,ph:r()*6.283,amp:0,used:0,dead:0,angle:0});
+     px+=w+spacing;
    }
-   gap.w=newW;
+ };
+ const motifs=[
+  // AZURIA: linhas limpas, ilhas largas e alternância simples de alturas.
+  (a)=>{ground('s',a,26,28);ground('s',a+42,26,28);return 100},
+  (a)=>{ground('b',a,34,30);ground('s',a+112,26,28);return 168},
+  (a)=>{ground('h',a+24,28,28,{y:45});ground('s',a+120,26,28);return 176},
+  (a)=>{pit(a,142,[18,26],[58,58],[0,1]);return 164},
+  (a)=>{ground('b',a,42,30);ground('b',a+58,42,30);return 140},
+  (a)=>{ground('v',a+25,38,24,{y:43,ph:r()*6.28,amp:5});return 92},
+  // VELORIA: diagonais de obstáculos, plataformas escalonadas e mudanças de ritmo.
+  (a)=>{ground('s',a,24,30);ground('b',a+88,32,38);return 152},
+  (a)=>{pit(a,158,[16,30],[54,58],[2,3]);return 180},
+  (a)=>{ground('h',a+12,28,28,{y:48});ground('b',a+100,32,42);return 168},
+  (a)=>{ground('b',a,34,34);ground('s',a+62,25,30);ground('s',a+94,25,30);return 154},
+  (a)=>{pit(a,164,[20,16],[60,58],[5,8]);return 184},
+  (a)=>{ground('v',a+12,38,24,{y:40,ph:r()*6.28,amp:6});ground('s',a+112,26,30);return 166},
+  // SOLARIS: blocos em sequência, janelas de salto e plataformas em zigue-zague.
+  (a)=>{ground('b',a,40,42);ground('s',a+82,26,30);ground('b',a+146,34,30);return 208},
+  (a)=>{pit(a,166,[24,14],[56,60],[1,2]);ground('s',a+188,26,30);return 230},
+  (a)=>{ground('s',a,26,30);ground('s',a+34,26,30);ground('b',a+112,38,42);return 178},
+  (a)=>{ground('p',a+22,108,14,{y:45});ground('s',a+142,26,30);return 194},
+  (a)=>{pit(a,160,[14,26],[52,62],[3,5]);return 182},
+  (a)=>{ground('h',a+12,28,28,{y:44});ground('v',a+102,38,24,{y:42,ph:r()*6.28,amp:5});return 170},
+  // NEBULIS: ilhas suspensas, obstáculos aéreos e travessias em três tempos.
+  (a)=>{pit(a,170,[14,30,18],[48,48,48],[8,9,1]);return 194},
+  (a)=>{ground('v',a+10,38,24,{y:41,ph:r()*6.28,amp:7});ground('s',a+108,26,32);ground('s',a+142,26,32);return 190},
+  (a)=>{ground('b',a,34,46);ground('h',a+100,28,30,{y:48});return 164},
+  (a)=>{pit(a,166,[28,16],[58,58],[2,8]);ground('b',a+190,34,38);return 236},
+  (a)=>{ground('p',a+12,92,14,{y:28});ground('v',a+130,38,24,{y:43,ph:r()*6.28,amp:6});return 184},
+  (a)=>{ground('s',a,24,30);ground('b',a+68,32,42);ground('s',a+142,26,30);return 194},
+  // ECLYPS: combinações densas, ilhas estreitas e decisões de salto/espera.
+  (a)=>{pit(a,174,[12,26,14],[46,46,48],[9,8,3]);return 198},
+  (a)=>{ground('b',a,34,46);ground('s',a+76,24,32);ground('v',a+148,38,24,{y:42,ph:r()*6.28,amp:7});return 206},
+  (a)=>{ground('h',a+10,28,30,{y:46});ground('b',a+92,34,42);ground('s',a+164,24,32);return 210},
+  (a)=>{pit(a,168,[26,12,24],[46,46,46],[5,9,2]);ground('s',a+194,24,32);return 226},
+  (a)=>{ground('s',a,24,32);ground('s',a+30,24,32);ground('b',a+94,34,46);ground('s',a+166,24,32);return 210},
+  (a)=>{ground('v',a+10,38,24,{y:40,ph:r()*6.28,amp:7});ground('h',a+92,28,30,{y:46});ground('b',a+164,34,44);return 214}
+ ];
+ // A ordem e a combinação são exclusivas por fase; os universos usam famílias
+ // diferentes e a rotação por índice evita repetir a mesma sequência.
+ const families=[[0,1,2,3,4,5],[6,7,8,9,10,11],[12,13,14,15,16,17],[18,19,20,21,22,23],[24,25,26,27,28,29]];
+ const family=families[u],count=demo?10:Math.max(12,Math.floor((len-1450)/(rest+250)));
+ let n=0,signature=[];
+ while(x<len-680&&n<count+8){
+   const phase=(i*7+n*5+u*3)%family.length;
+   const idx=family[(phase+(n%3===0?i%family.length:0))%family.length];
+   const start=x+rest+Math.round(r()*(1-d)*24);
+   if(start>=len-680)break;
+   const width=motifs[idx](start);
+   signature.push(idx);
+   x=start+width;
+   n++;
  }
- ob.sort((a,b)=>a.x-b.x);return{ob,len,spd}}
+ ob.sort((a,b)=>a.x-b.x);
+ return{ob,len,spd};
+}
 /* ===== ESTADO / TELA ===== */
 let W,H,sc,dpr,gy=300,G={st:'menu',ob:[],p:null,cam:0},bgG,bgU=-1,cur='',sel=S.eq,eyeSel=S.eye||'classic',tab='aud',rc=0,parts=[],pt=0,hbv='',tt;
 function rs(){const og=gy,iw=innerWidth,ih=innerHeight;dpr=Math.min(devicePixelRatio||1,S.o.q?2:1);sc=Math.min(ih/360,iw/520);W=iw/sc;H=ih/sc;gy=Math.round(H*.74);cv.width=iw*dpr;cv.height=ih*dpr;bgG=null;if(G.p)G.p.y+=gy-og}
